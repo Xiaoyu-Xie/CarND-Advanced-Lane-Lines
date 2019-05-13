@@ -110,14 +110,11 @@ Links to project_video_output: https://youtu.be/VEujYoKxFM0
 Links to harder_challenge_video_output: https://youtu.be/VEujYoKxFM0
 
 ## Discussion
-Two issues are encountered and one has been resolved. Both of them are discussed below.
 
-*1. Detection sensitive to shadow and stains on the road*
+*Threshold tuning*
 ---
+As talked in the pipline section, the hardest part is to fine tune thresholds for different filtering approaches. Even if I tried with different thresholds combinations, it is still difficult to make the code work perfectly for challenge and harder challenge videos because the lane in the videos are either too bright or too dim.
 
-When there is any shadow or stain on the road, the lane profile detected is not reasonable. As explained above, this is caused by the fact that we only check the x-gradient in S channel in the lecture. From my testing, the gradient is not always zero (contrary to what is claimed in the lecture) and could affect detection adversly. The solution is to check the color of pixel in RGB space instead and it works quite well.
-
-*2. Sliding window approach doesn't work well on the curvy lanes*
+*Curvy lanes*
 ---
-
-The algorithm above works okay for the challenge_video but fails in harder_challenge_video. The root cause is that the sliding window approach doesn't always work. Interestingly, it is able to predict one lane (either left/right). So one improvement I can think of is to use the distance between left/right lane as the lane distance is known in most cases. To do this, we'll first define a cost function that represents the correctness of prediction for each lane. Then we accept the lane prediction of the higher score and reject the other one. Now we use the lane distance to do a refined search to detect the other lane. This should improve the detection quite a lot when only one prediction is reliable. However, I didn't have the time to test it as it requires reconstruct all the helper functions.
+The algorithm still works for the challenge_video but fails in harder_challenge_video. The harder video has sharper turns in some sequential frames. So I think instead of taking a perspective transform of enire image, we can select a smaller section to do the transform since this video has sharper turns and the length of a lane is shorter than the other vidoes.
